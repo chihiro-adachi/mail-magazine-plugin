@@ -238,6 +238,7 @@ class MailMagazineCustomerRepository extends EntityRepository
                 ->setParameter('statuses', $customerStatus);
         }
 
+        $orderJoin = false;
         // buy_product_name、buy_product_code
         if (!empty($searchData['buy_product_code']) && $searchData['buy_product_code']) {
             $qb
@@ -245,6 +246,25 @@ class MailMagazineCustomerRepository extends EntityRepository
                 ->leftJoin('o.OrderDetails', 'od')
                 ->andWhere('od.product_name LIKE :buy_product_name OR od.product_code LIKE :buy_product_name')
                 ->setParameter('buy_product_name', '%'.$searchData['buy_product_code'].'%');
+            $orderJoin = true;
+        }
+
+        // category
+        if (!empty($searchData['buy_category']) && $searchData['buy_category']) {
+            $Categories = $searchData['buy_category']->getSelfAndDescendants();
+            if ($Categories) {
+                if (false === $orderJoin) {
+                    $qb
+                        ->leftJoin('c.Orders', 'o')
+                        ->leftJoin('o.OrderDetails', 'od');
+                }
+                $qb
+                    ->leftJoin('od.Product', 'product')
+                    ->innerJoin('product.ProductCategories', 'product_categories')
+                    ->innerJoin('product_categories.Category', 'category')
+                    ->andWhere($qb->expr()->in('product_categories.Category', ':Categories'))
+                    ->setParameter('Categories', $Categories);
+            }
         }
 
         // Order By

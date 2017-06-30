@@ -53,6 +53,9 @@ class MailMagazineController
                 $searchData = $searchForm->getData();
             }
 //            dump($request->get('mail_magazine'));exit;
+
+            dump($searchData);
+
             // sessionのデータ保持
             $session->set('plugin.mailmagazine.search', $searchData);
 

@@ -221,6 +221,17 @@ class MailMagazineType extends AbstractType
                 'required' => false,
             ))
             ->addEventSubscriber(new \Eccube\Event\FormEventSubscriber());
+
+
+        $builder->add(
+            'buy_category',
+            'category',
+            array(
+                'label' => 'カテゴリ',
+                'empty_value' => '選択してください',
+                'required' => false,
+            )
+        );
     }
 
     /**
